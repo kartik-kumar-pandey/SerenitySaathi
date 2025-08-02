@@ -2,21 +2,17 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const LanguageContext = createContext();
 
-// Only English UI translations - Hindi is only for AI conversation
 const translations = {
   en: {
-    // App header
     appTitle: "SerenitySaathi",
     appSubtitle: "Your friendly mental health companion. A safe space for empathetic conversations and wellness resources.",
     
-    // Navigation
     chat: "Chat",
     mood: "Mood",
     breathe: "Breathe",
     resources: "Resources",
     crisis: "Crisis",
     
-    // Chat interface
     welcomeMessage: "Hello! I'm Mitra, your friendly mental health companion. I'm here to listen and chat with you. How are you feeling today?",
     placeholder: "Type your message here...",
     tryStartingWith: "Try starting with:",
@@ -30,7 +26,6 @@ const translations = {
     clearConfirm: "Are you sure you want to clear all chat history? This action cannot be undone.",
     clearChatConfirm: "Are you sure you want to clear the chat history?",
     
-    // Suggestions
     suggestions: [
       "I'm feeling anxious today",
       "I need help with stress",
@@ -39,7 +34,6 @@ const translations = {
       "I want to talk about my feelings"
     ],
     
-    // Mood tracker
     moodTitle: "How are you feeling today?",
     moodSubtitle: "Track your mood to understand your emotional patterns",
     saveMoodEntry: "Save Mood Entry",
@@ -53,7 +47,6 @@ const translations = {
     averageIntensity: "Average intensity",
     mostFrequentMood: "Most frequent mood",
     
-    // Mood options
     moods: [
       { id: 'happy', emoji: '😊', label: 'Happy' },
       { id: 'excited', emoji: '🤩', label: 'Excited' },
@@ -63,7 +56,6 @@ const translations = {
       { id: 'anxious', emoji: '😰', label: 'Anxious' }
     ],
     
-    // Breathing exercise
     breathingTitle: "Breathing Exercise",
     breathingSubtitle: "Take a moment to breathe mindfully and find your calm",
     startExercise: "Start Exercise",
@@ -78,7 +70,6 @@ const translations = {
       "Practice regularly for best results"
     ],
     
-    // Breathing patterns
     breathingPatterns: [
       {
         id: 'box',
@@ -97,17 +88,14 @@ const translations = {
       }
     ],
     
-    // Crisis support
     crisisTitle: "Crisis Support",
     crisisSubtitle: "If you're in crisis, help is available 24/7",
     immediateActions: "Immediate Actions",
     crisisDescription: "If you're experiencing thoughts of self-harm or suicide, please reach out immediately.",
     callNow: "Call Now",
     
-    // Footer
     footerText: "SerenitySaathi is not a substitute for professional mental health care. If you're experiencing a crisis, please contact emergency services immediately.",
     
-    // Disclaimer
     disclaimerTitle: "Welcome to SerenitySaathi",
     disclaimerText: "Mitra is an AI-powered mental health companion designed to provide supportive conversations and wellness resources. Please note that this is not a substitute for professional mental health care.",
     disclaimerPoints: [
@@ -142,7 +130,6 @@ const translations = {
   },
   
   hi: {
-    // Only AI prompt in Hindi - no UI translations
     aiPrompt: `आप मित्र हैं, मानसिक कल्याण बातचीत के लिए एक सहायक AI साथी।
     आपकी भूमिका सहानुभूतिपूर्ण, निर्णय-मुक्त और सहायक होना है।
     
@@ -163,11 +150,9 @@ const translations = {
   }
 };
 
-// Function to detect if text contains Hindi characters
 const detectLanguage = (text) => {
   if (!text || typeof text !== 'string') return 'en';
   
-  // If more than 30% of characters are Hindi, consider it Hindi
   const hindiChars = text.match(/[\u0900-\u097F]/g) || [];
   const totalChars = text.replace(/\s/g, '').length;
   const hindiPercentage = totalChars > 0 ? (hindiChars.length / totalChars) * 100 : 0;
@@ -178,7 +163,6 @@ const detectLanguage = (text) => {
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState('en');
 
-  // Load saved language preference
   useEffect(() => {
     const savedLanguage = localStorage.getItem('mitra_language');
     if (savedLanguage && translations[savedLanguage]) {
@@ -186,12 +170,10 @@ export const LanguageProvider = ({ children }) => {
     }
   }, []);
 
-  // Save language preference
   useEffect(() => {
     localStorage.setItem('mitra_language', language);
   }, [language]);
 
-  // Function to detect and set language based on user input
   const detectAndSetLanguage = (userInput) => {
     const detectedLanguage = detectLanguage(userInput);
     setLanguage(detectedLanguage);
@@ -199,15 +181,12 @@ export const LanguageProvider = ({ children }) => {
   };
 
   const t = (key, params = {}) => {
-    // Always use English UI translations, only use Hindi for AI prompt
     let text = translations.en[key] || key;
     
-    // Only use Hindi for AI prompt
     if (key === 'aiPrompt' && language === 'hi') {
       text = translations.hi[key] || translations.en[key];
     }
     
-    // Replace parameters in the text
     Object.keys(params).forEach(param => {
       text = text.replace(`{${param}}`, params[param]);
     });
@@ -220,7 +199,7 @@ export const LanguageProvider = ({ children }) => {
     setLanguage,
     detectAndSetLanguage,
     t,
-    translations: translations.en // Always use English UI translations
+    translations: translations.en
   };
 
   return (

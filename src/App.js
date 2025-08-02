@@ -21,14 +21,11 @@ function AppContent() {
   const { t } = useLanguage();
   const { user, isAuthenticated, isLoading, login, signup, resetPassword } = useSupabaseAuthContext();
   
-  // Listen for password recovery events
   useEffect(() => {
     const handlePasswordRecovery = () => {
-      console.log('Password recovery detected, showing reset modal');
       setShowPasswordResetModal(true);
     };
 
-    // Listen for custom event that might be triggered by auth context
     window.addEventListener('password-recovery', handlePasswordRecovery);
     
     return () => {
@@ -37,7 +34,6 @@ function AppContent() {
   }, []);
   const [showDisclaimer, setShowDisclaimer] = useState(true);
 
-  // Check if user has already accepted disclaimer
   useEffect(() => {
     if (user) {
       const disclaimerKey = `mitra_disclaimer_accepted_${user.id}`;
@@ -48,45 +44,26 @@ function AppContent() {
     }
   }, [user]);
 
-  // Check for password reset tokens in URL
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const accessToken = urlParams.get('access_token');
     const refreshToken = urlParams.get('refresh_token');
     const type = urlParams.get('type');
     const error = urlParams.get('error');
-    const errorDescription = urlParams.get('error_description');
     
-    // Debug: Log all URL parameters
-    console.log('URL Parameters:', {
-      accessToken: accessToken ? 'present' : 'missing',
-      refreshToken: refreshToken ? 'present' : 'missing',
-      type,
-      error,
-      errorDescription,
-      fullUrl: window.location.href
-    });
+
     
-    // Check if this is a password recovery flow
-    // Supabase can send different combinations of parameters
     if (accessToken && refreshToken && (type === 'recovery' || type === 'password_recovery')) {
-      console.log('Password reset tokens detected in URL');
       setShowPasswordResetModal(true);
       
-      // Clean up the URL by removing the tokens
       const newUrl = window.location.pathname;
       window.history.replaceState({}, document.title, newUrl);
     } else if (accessToken && refreshToken) {
-      // If we have tokens but no type, still show the modal
-      console.log('Tokens detected without type, showing password reset modal');
       setShowPasswordResetModal(true);
       
-      // Clean up the URL by removing the tokens
       const newUrl = window.location.pathname;
       window.history.replaceState({}, document.title, newUrl);
     } else if (error) {
-      console.error('Password reset error:', error, errorDescription);
-      // You could show an error message here if needed
     }
   }, []);
 
@@ -218,24 +195,24 @@ function AppContent() {
           ))}
         </div>
 
-        <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
-          <div className="text-center max-w-2xl">
+        <div className="relative z-10 min-h-screen flex items-center justify-center p-2 sm:p-4 lg:p-6">
+          <div className="text-center max-w-2xl w-full px-2 sm:px-4">
             {/* Main Icon with Animation */}
-            <motion.div
-              initial={{ scale: 0, rotate: -180 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="w-32 h-32 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl"
-            >
-              <Shield className="w-16 h-16 text-white" />
-            </motion.div>
+                          <motion.div
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8 shadow-2xl"
+              >
+                <Shield className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 text-white" />
+              </motion.div>
 
             {/* Main Heading */}
             <motion.h1
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-6xl font-bold text-white mb-6 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent"
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent"
             >
               Welcome to SerenitySaathi
             </motion.h1>
@@ -245,7 +222,7 @@ function AppContent() {
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-xl text-white/90 mb-12 leading-relaxed max-w-lg mx-auto"
+              className="text-base sm:text-lg lg:text-xl text-white/90 mb-6 sm:mb-8 lg:mb-12 leading-relaxed max-w-lg mx-auto px-2 sm:px-4"
             >
               Your secure mental health companion. 
               <br />
@@ -257,23 +234,23 @@ function AppContent() {
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.6 }}
-              className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-4xl mx-auto"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8 lg:mb-12 max-w-4xl mx-auto px-2 sm:px-4"
             >
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                <Heart className="w-8 h-8 text-pink-400 mx-auto mb-3" />
-                <h3 className="text-white font-semibold mb-2">Compassionate Care</h3>
-                <p className="text-white/70 text-sm">24/7 mental health support with empathy and understanding</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                <Shield className="w-8 h-8 text-blue-400 mx-auto mb-3" />
-                <h3 className="text-white font-semibold mb-2">Secure & Private</h3>
-                <p className="text-white/70 text-sm">Your data is encrypted and protected with bank-level security</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                <Sparkles className="w-8 h-8 text-purple-400 mx-auto mb-3" />
-                <h3 className="text-white font-semibold mb-2">AI-Powered</h3>
-                <p className="text-white/70 text-sm">Advanced AI that adapts to your unique needs and preferences</p>
-              </div>
+                              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/20">
+                  <Heart className="w-6 h-6 sm:w-8 sm:h-8 text-pink-400 mx-auto mb-2 sm:mb-3" />
+                  <h3 className="text-white font-semibold mb-1 sm:mb-2 text-sm sm:text-base">Compassionate Care</h3>
+                  <p className="text-white/70 text-xs sm:text-sm">24/7 mental health support with empathy and understanding</p>
+                </div>
+                              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/20">
+                  <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400 mx-auto mb-2 sm:mb-3" />
+                  <h3 className="text-white font-semibold mb-1 sm:mb-2 text-sm sm:text-base">Secure & Private</h3>
+                  <p className="text-white/70 text-xs sm:text-sm">Your data is encrypted and protected with bank-level security</p>
+                </div>
+                              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/20">
+                  <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400 mx-auto mb-2 sm:mb-3" />
+                  <h3 className="text-white font-semibold mb-1 sm:mb-2 text-sm sm:text-base">AI-Powered</h3>
+                  <p className="text-white/70 text-xs sm:text-sm">Advanced AI that adapts to your unique needs and preferences</p>
+                </div>
             </motion.div>
 
             {/* Get Started Button */}
@@ -287,12 +264,12 @@ function AppContent() {
               }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowLoginModal(true)}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-12 py-5 rounded-2xl font-bold text-xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1"
+              className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 sm:px-12 py-4 sm:py-5 rounded-2xl font-bold text-lg sm:text-xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1 w-full sm:w-auto"
             >
               <span className="flex items-center justify-center space-x-3">
-                <Sparkles className="w-6 h-6" />
+                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
                 <span>Get Started</span>
-                <Sparkles className="w-6 h-6" />
+                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
               </span>
             </motion.button>
 
@@ -301,7 +278,7 @@ function AppContent() {
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8, delay: 1.0 }}
-              className="mt-12 flex items-center justify-center space-x-8 text-white/60 text-sm"
+              className="mt-8 sm:mt-12 flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8 text-white/60 text-sm px-4"
             >
               <div className="flex items-center space-x-2">
                 <Shield className="w-4 h-4" />
@@ -325,27 +302,13 @@ function AppContent() {
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}
         onLogin={async (email, password) => {
-          try {
-            await login(email, password);
-            setShowLoginModal(false);
-          } catch (error) {
-            // Error is handled by AuthContext
-          }
+          await login(email, password);
         }}
         onSignup={async (name, email, password) => {
-          try {
-            await signup(name, email, password);
-            setShowLoginModal(false);
-          } catch (error) {
-            // Error is handled by AuthContext
-          }
+          await signup(name, email, password);
         }}
         onResetPassword={async (email) => {
-          try {
-            await resetPassword(email);
-          } catch (error) {
-            // Error is handled by AuthContext
-          }
+          await resetPassword(email);
         }}
       />
 
@@ -380,8 +343,8 @@ function AppContent() {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="glass backdrop-blur-md border-b border-white/20 sticky top-0 z-50"
         >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
+          <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+            <div className="flex items-center justify-between h-12 sm:h-14 lg:h-16">
               {/* Logo and Title */}
               <motion.div 
                 className="flex items-center space-x-3"
@@ -389,28 +352,28 @@ function AppContent() {
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
                 <div className="relative">
-                  <div className="w-14 h-14 flex items-center justify-center">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 flex items-center justify-center">
                     <img 
                       src="/logo_SerenitySaathi.png" 
                       alt="SerenitySaathi Logo" 
-                      className="w-12 h-12 object-contain drop-shadow-lg"
+                      className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 object-contain drop-shadow-lg"
                       onError={(e) => {
                         // Fallback to Sparkles icon if image fails to load
                         e.target.style.display = 'none';
                         e.target.nextSibling.style.display = 'flex';
                       }}
                     />
-                    <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-mental-500 rounded-xl flex items-center justify-center shadow-lg hidden">
-                      <Sparkles className="w-7 h-7 text-white" />
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-gradient-to-r from-primary-500 to-mental-500 rounded-xl flex items-center justify-center shadow-lg hidden">
+                      <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 lg:w-7 lg:h-7 text-white" />
                     </div>
                   </div>
                   <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white animate-pulse"></div>
                 </div>
-                <div className="ml-3">
-                  <h1 className="text-2xl font-bold text-gray-800 dark:text-white drop-shadow-lg">
+                <div className="ml-1 sm:ml-2 lg:ml-3">
+                  <h1 className="text-base sm:text-lg lg:text-2xl font-bold text-gray-800 dark:text-white drop-shadow-lg">
                     {t('appTitle')}
                   </h1>
-                  <div className="flex items-center space-x-2 mt-1">
+                  <div className="hidden sm:flex items-center space-x-2 mt-1">
                     <div className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-pulse"></div>
                     <p className="text-sm font-medium text-gray-600 dark:text-white/90 tracking-wide">
                       Mitra - Your mental health companion
@@ -470,24 +433,24 @@ function AppContent() {
           </div>
         </motion.header>
 
-        {/* Mobile Navigation */}
-        <div className="md:hidden fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
-          <div className="glass rounded-full p-2 shadow-strong">
-            <div className="flex items-center space-x-1">
+                    {/* Mobile Navigation */}
+        <div className="md:hidden fixed bottom-2 sm:bottom-4 left-1/2 transform -translate-x-1/2 z-50 mobile-safe-area">
+          <div className="glass rounded-full p-2 sm:p-3 shadow-strong mobile-touch-target">
+            <div className="flex items-center space-x-1 sm:space-x-2">
               {navigationItems.map((item) => (
                 <motion.button
                   key={item.id}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setActiveTab(item.id)}
-                  className={`p-3 rounded-full transition-all duration-200 ${
+                  className={`p-3 sm:p-4 rounded-full transition-all duration-200 ${
                     activeTab === item.id
                       ? 'bg-white/20 text-white dark:text-white text-gray-800 shadow-lg'
                       : 'text-white/80 dark:text-white/80 text-gray-700 hover:text-white dark:hover:text-white hover:bg-white/10'
                   }`}
                   title={item.label}
                 >
-                  <item.icon className="w-5 h-5" />
+                  <item.icon className="w-5 h-5 sm:w-6 sm:h-6" />
                 </motion.button>
               ))}
             </div>
@@ -495,7 +458,7 @@ function AppContent() {
         </div>
 
         {/* Main Content Area */}
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-2 sm:py-4 lg:py-8 pb-20 md:pb-8 mobile-safe-area">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -522,7 +485,7 @@ function AppContent() {
                        Explore helpful resources and information to support your mental well-being journey.
                      </p>
                   </motion.div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     {resources.map((resource, index) => (
                       <motion.div
                         key={resource.title}

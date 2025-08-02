@@ -24,31 +24,24 @@ const ChatInterface = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // Get current conversation messages
   const currentConversation = getCurrentConversation();
   const messages = useMemo(() => currentConversation?.messages || [], [currentConversation]);
 
-  // Track which conversations have had welcome messages added
   const welcomeMessagesAdded = useRef({});
 
-  // Ensure we always have an active conversation and welcome message
   useEffect(() => {
-    // Only run this logic after the app has been initialized from localStorage
     if (!isInitialized) return;
 
-    // If no conversations exist, create one
     if (conversations.length === 0) {
       createNewConversation("New Chat");
       return;
     }
 
-    // If we have conversations but no current conversation ID, set the first one as current
     if (!currentConversationId && conversations.length > 0) {
       setCurrentConversation(conversations[0].id);
       return;
     }
 
-    // If we have a current conversation but no welcome message, add one
     if (currentConversation && 
         currentConversation.messages.length === 0 && 
         !welcomeMessagesAdded.current[currentConversation.id]) {
@@ -71,16 +64,13 @@ const ChatInterface = () => {
   const GEMINI_API_KEY = "AIzaSyAyXbvpjk1OiG18lZloxPXnBo-3XTWLVUs";
   const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 
-  // Connect to Gemini API
   const getAIResponse = async (userMessage, detectedLanguage) => {
     try {
-      // Get conversation context for more personalized responses
       const conversationContext = currentConversation?.messages?.slice(-3) || [];
       const contextText = conversationContext.length > 0 
         ? `\n\nCONVERSATION CONTEXT (last 3 messages):\n${conversationContext.map(msg => `${msg.sender}: ${msg.text}`).join('\n')}`
         : '';
 
-      // Enhanced prompt for better mental health responses
       const enhancedPrompt = `You are Mitra, an advanced AI mental health companion designed to provide empathetic, supportive, and evidence-based responses. 
 
 IMPORTANT GUIDELINES:
@@ -171,7 +161,6 @@ Please provide a supportive, helpful response that follows these guidelines. DO 
         throw new Error('No response from Gemini API');
       }
     } catch (error) {
-      console.error('Error in getAIResponse:', error);
       // Enhanced fallback responses if API fails
       const fallbackResponses = detectedLanguage === 'hi' ? [
         "मैं आपकी बात सुन रहा हूं और आपकी भावनाएं पूरी तरह वैध हैं। क्या आप मुझे बता सकते हैं कि आप कैसा महसूस कर रहे हैं? मैं यहां आपका समर्थन करने के लिए हूं।",
@@ -206,7 +195,6 @@ Please provide a supportive, helpful response that follows these guidelines. DO 
     
     if (!currentConversationId) {
       createNewConversation("New Chat");
-      // Wait a bit for the conversation to be created
       setTimeout(() => {
         const newConversationId = getCurrentConversation()?.id;
         if (newConversationId) {
@@ -220,10 +208,8 @@ Please provide a supportive, helpful response that follows these guidelines. DO 
   };
 
   const sendMessageToConversation = async (conversationId, messageText) => {
-    // Detect language from user input
     const detectedLanguage = detectAndSetLanguage(messageText);
 
-    // Add user message to conversation
     addMessageToConversation(conversationId, messageText, 'user');
     setInputMessage('');
     setIsLoading(true);
@@ -231,11 +217,9 @@ Please provide a supportive, helpful response that follows these guidelines. DO 
     try {
       const response = await getAIResponse(messageText, detectedLanguage);
       
-      // Add bot response to conversation
       addMessageToConversation(conversationId, response, 'bot');
       
     } catch (error) {
-      console.error('Error getting AI response:', error);
       const errorMessage = t('apiError') || "I'm sorry, I'm having trouble responding right now. Please try again.";
       addMessageToConversation(conversationId, errorMessage, 'bot');
     } finally {
@@ -279,12 +263,10 @@ Please provide a supportive, helpful response that follows these guidelines. DO 
 
   const startNewChat = () => {
     createNewConversation("New Chat");
-    // Don't close sidebar automatically - let user close it manually
   };
 
   const handleSelectConversation = (conversationId) => {
     setCurrentConversation(conversationId);
-    // Don't close sidebar automatically - let user close it manually
   };
 
   const toggleSidebar = () => {
@@ -314,7 +296,7 @@ Please provide a supportive, helpful response that follows these guidelines. DO 
   };
 
   return (
-    <div className="flex h-[calc(100vh-200px)] gap-6">
+    <div className="flex h-[calc(100vh-200px)] gap-2 sm:gap-4 lg:gap-6">
       {/* Chat Sidebar */}
       <AnimatePresence>
         {isSidebarOpen && (
@@ -334,11 +316,11 @@ Please provide a supportive, helpful response that follows these guidelines. DO 
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed left-0 top-0 h-full w-80 bg-white dark:bg-gray-900 backdrop-blur-xl shadow-2xl z-50 lg:relative lg:translate-x-0 lg:ml-0 lg:rounded-2xl lg:border lg:border-gray-200/50 dark:lg:border-gray-700/50 lg:h-[calc(100vh-200px)] lg:flex lg:flex-col"
+              className="fixed left-0 top-0 h-full w-72 sm:w-80 lg:w-96 bg-white dark:bg-gray-900 backdrop-blur-xl shadow-2xl z-50 lg:relative lg:translate-x-0 lg:ml-0 lg:rounded-2xl lg:border lg:border-gray-200/50 dark:lg:border-gray-700/50 lg:h-[calc(100vh-200px)] lg:flex lg:flex-col"
             >
                              {/* Header */}
-               <div className="flex items-center justify-between p-6 border-b border-gray-200/60 dark:border-gray-700/60 bg-gradient-to-r from-blue-50/80 to-amber-50/80 dark:from-gray-800/80 dark:to-gray-900/80 backdrop-blur-sm flex-shrink-0">
-                 <h2 className="text-xl font-bold text-blue-600 dark:text-white bg-gradient-to-r from-blue-600 to-amber-600 bg-clip-text text-transparent">
+               <div className="flex items-center justify-between p-3 sm:p-4 lg:p-6 border-b border-gray-200/60 dark:border-gray-700/60 bg-gradient-to-r from-blue-50/80 to-amber-50/80 dark:from-gray-800/80 dark:to-gray-900/80 backdrop-blur-sm flex-shrink-0">
+                 <h2 className="text-base sm:text-lg lg:text-xl font-bold text-blue-600 dark:text-white bg-gradient-to-r from-blue-600 to-amber-600 bg-clip-text text-transparent">
                    {t('chatHistory')}
                  </h2>
                 <div className="flex items-center space-x-3">
@@ -383,11 +365,11 @@ Please provide a supportive, helpful response that follows these guidelines. DO 
               )}
 
                              {/* Conversations List */}
-               <div className="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900 min-h-0 max-h-[calc(100vh-400px)] chat-history-scrollbar">
+               <div className="flex-1 overflow-y-auto p-2 sm:p-3 lg:p-4 bg-gray-50 dark:bg-gray-900 min-h-0 max-h-[calc(100vh-400px)] chat-history-scrollbar mobile-scroll">
                 {conversations.length === 0 ? (
-                  <div className="p-8 text-center">
-                                         <div className="w-16 h-16 bg-gradient-to-r from-blue-100 to-amber-100 dark:from-blue-900/30 dark:to-amber-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                       <MessageCircle className="w-8 h-8 text-blue-500 dark:text-blue-400" />
+                  <div className="p-4 sm:p-8 text-center">
+                                         <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-100 to-amber-100 dark:from-blue-900/30 dark:to-amber-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                       <MessageCircle className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500 dark:text-blue-400" />
                      </div>
                     <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">
                       {t('noChatHistory')}
@@ -500,75 +482,75 @@ Please provide a supportive, helpful response that follows these guidelines. DO 
       <div className="flex-1 flex flex-col">
         <div className={`${isDarkMode ? 'bg-gray-900/95' : 'bg-white/95'} backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden h-full flex flex-col border border-gray-200/50 dark:border-gray-700/50`}>
                      {/* Chat Header */}
-           <div className={`${isDarkMode ? 'bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900' : 'bg-gradient-to-r from-blue-500 to-amber-100'} p-6 text-white flex-shrink-0 shadow-xl relative overflow-hidden`}>
+           <div className={`${isDarkMode ? 'bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900' : 'bg-gradient-to-r from-blue-500 to-amber-100'} p-3 sm:p-4 lg:p-6 text-white flex-shrink-0 shadow-xl relative overflow-hidden`}>
             {/* Background Pattern */}
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-16 translate-x-16"></div>
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12"></div>
             
             <div className="relative flex items-center justify-between">
-              <div className="flex items-center">
+              <div className="flex items-center flex-1 min-w-0">
                 <motion.button
                   whileHover={{ scale: 1.05, rotate: -5 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={toggleSidebar}
-                  className="p-3 bg-white/20 backdrop-blur-sm rounded-2xl hover:bg-white/30 transition-all duration-300 mr-4 shadow-lg hover:shadow-xl border border-white/20"
+                  className="p-2 sm:p-3 bg-white/20 backdrop-blur-sm rounded-xl sm:rounded-2xl hover:bg-white/30 transition-all duration-300 mr-2 sm:mr-4 shadow-lg hover:shadow-xl border border-white/20"
                   title="Chat History"
                 >
-                  <History className="w-5 h-5" />
+                  <History className="w-4 h-4 sm:w-5 sm:h-5" />
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.05, rotate: 90 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={startNewChat}
-                  className="p-3 bg-white/20 backdrop-blur-sm rounded-2xl hover:bg-white/30 transition-all duration-300 mr-4 shadow-lg hover:shadow-xl border border-white/20"
+                  className="p-2 sm:p-3 bg-white/20 backdrop-blur-sm rounded-xl sm:rounded-2xl hover:bg-white/30 transition-all duration-300 mr-2 sm:mr-4 shadow-lg hover:shadow-xl border border-white/20"
                   title="New Chat"
                 >
-                  <Plus className="w-5 h-5" />
+                  <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
                 </motion.button>
-                <div className="bg-white/25 backdrop-blur-sm p-3 rounded-2xl mr-5 shadow-lg border border-white/20">
-                  <Bot className="w-7 h-7" />
+                <div className="bg-white/25 backdrop-blur-sm p-2 sm:p-3 rounded-xl sm:rounded-2xl mr-3 sm:mr-5 shadow-lg border border-white/20">
+                  <Bot className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
                 </div>
-                <div>
-                                    <h2 className="text-2xl font-bold text-white drop-shadow-lg">Mitra</h2>
-                  <p className="text-white/95 text-sm font-medium drop-shadow-sm">
-                    Your mental health companion
-                    <span className="ml-3 text-xs bg-green-500/30 backdrop-blur-sm px-3 py-1 rounded-full font-medium border border-green-400/20 text-green-100">
+                <div className="min-w-0 flex-1">
+                                    <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white drop-shadow-lg truncate">Mitra</h2>
+                  <p className="text-white/95 text-xs sm:text-sm font-medium drop-shadow-sm">
+                    <span className="hidden sm:inline">Your mental health companion</span>
+                    <span className="sm:ml-3 text-xs bg-green-500/30 backdrop-blur-sm px-1.5 sm:px-2 lg:px-3 py-0.5 sm:py-1 rounded-full font-medium border border-green-400/20 text-green-100">
                       🔒 Encrypted
                     </span>
                     {language === 'hi' && (
-                      <span className="ml-3 text-xs bg-white/30 backdrop-blur-sm px-3 py-1 rounded-full font-medium border border-white/20">
+                      <span className="ml-1.5 sm:ml-2 lg:ml-3 text-xs bg-white/30 backdrop-blur-sm px-1.5 sm:px-2 lg:px-3 py-0.5 sm:py-1 rounded-full font-medium border border-white/20">
                         हिंदी में बातचीत
                       </span>
                     )}
                   </p>
                 </div>
               </div>
-              <div className="flex space-x-3">
+              <div className="flex space-x-1 sm:space-x-2 lg:space-x-3 flex-shrink-0">
                 <motion.button
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={exportChat}
-                  className="p-3 bg-white/20 backdrop-blur-sm rounded-2xl hover:bg-white/30 transition-all duration-300 shadow-lg hover:shadow-xl border border-white/20"
+                  className="p-2 sm:p-3 bg-white/20 backdrop-blur-sm rounded-xl sm:rounded-2xl hover:bg-white/30 transition-all duration-300 shadow-lg hover:shadow-xl border border-white/20"
                   title={t('exportChat')}
                 >
-                  <Download className="w-5 h-5" />
+                  <Download className="w-4 h-4 sm:w-5 sm:h-5" />
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={clearCurrentChat}
-                  className="p-3 bg-white/20 backdrop-blur-sm rounded-2xl hover:bg-white/30 transition-all duration-300 shadow-lg hover:shadow-xl border border-white/20"
+                  className="p-2 sm:p-3 bg-white/20 backdrop-blur-sm rounded-xl sm:rounded-2xl hover:bg-white/30 transition-all duration-300 shadow-lg hover:shadow-xl border border-white/20"
                   title={t('clearChat')}
                 >
-                  <Trash2 className="w-5 h-5" />
+                  <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
                 </motion.button>
               </div>
             </div>
           </div>
 
           {/* Messages Container */}
-                     <div className="flex-1 overflow-y-auto p-6 space-y-6 min-h-0 messages-scrollbar bg-gradient-to-b from-gray-50/50 to-white/50 dark:from-gray-800/50 dark:to-gray-900/50">
+                     <div className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6 space-y-3 sm:space-y-4 lg:space-y-6 min-h-0 messages-scrollbar mobile-scroll bg-gradient-to-b from-gray-50/50 to-white/50 dark:from-gray-800/50 dark:to-gray-900/50">
             <AnimatePresence>
               {messages.length === 0 ? (
                 <motion.div
@@ -597,25 +579,25 @@ Please provide a supportive, helpful response that follows these guidelines. DO 
                      exit={{ opacity: 0, y: -20 }}
                      className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                    >
-                    <div className={`flex items-start max-w-xs lg:max-w-md ${message.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                                                                    <div className={`flex-shrink-0 w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg ${
-                         message.sender === 'user' 
-                           ? 'bg-gradient-to-r from-blue-400 to-blue-500 text-white ml-3' 
-                           : 'bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 text-gray-700 dark:text-gray-200 mr-3'
+                    <div className={`flex items-start max-w-[260px] sm:max-w-xs lg:max-w-md ${message.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                                                                                                                                          <div className={`flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg ${
+                           message.sender === 'user' 
+                             ? 'bg-gradient-to-r from-blue-400 to-blue-500 text-white ml-2 sm:ml-3' 
+                             : 'bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 text-gray-700 dark:text-gray-200 mr-2 sm:mr-3'
                        }`}>
-                         {message.sender === 'user' ? <User className="w-5 h-5" /> : <Bot className="w-5 h-5" />}
+                         {message.sender === 'user' ? <User className="w-4 h-4 sm:w-5 sm:h-5" /> : <Bot className="w-4 h-4 sm:w-5 sm:h-5" />}
                        </div>
-                                             <div className={`rounded-3xl px-6 py-4 shadow-lg backdrop-blur-sm ${
+                                             <div className={`rounded-2xl sm:rounded-3xl px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4 shadow-lg backdrop-blur-sm ${
                          message.sender === 'user' 
                            ? 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border border-blue-200' 
                            : 'bg-white/90 dark:bg-gray-800/90 text-gray-800 dark:text-white border border-gray-200/50 dark:border-gray-700/50'
                        }`}>
-                        <p className="text-sm leading-relaxed font-medium">{message.text}</p>
-                                                 <p className={`text-xs mt-3 font-medium ${
-                           message.sender === 'user' 
-                             ? 'text-blue-600' 
-                             : 'text-gray-500 dark:text-gray-400'
-                         }`}>
+                        <p className="text-xs sm:text-sm leading-relaxed font-medium break-words">{message.text}</p>
+                                                                                                    <p className={`text-xs mt-2 sm:mt-3 font-medium ${
+                             message.sender === 'user' 
+                               ? 'text-blue-600' 
+                               : 'text-gray-500 dark:text-gray-400'
+                           }`}>
                           {formatTime(message.timestamp)}
                         </p>
                       </div>
@@ -668,7 +650,7 @@ Please provide a supportive, helpful response that follows these guidelines. DO 
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: index * 0.1 }}
                           onClick={() => handleSuggestionClick(suggestion)}
-                          className="bg-white/80 dark:bg-gray-800/80 hover:bg-gradient-to-r hover:from-primary-100 hover:to-mental-100 dark:hover:from-primary-900/30 dark:hover:to-mental-900/30 text-gray-700 dark:text-gray-300 hover:text-primary-700 dark:hover:text-primary-300 px-2 py-1 rounded-lg text-xs font-medium transition-all duration-300 shadow-sm hover:shadow-md border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm hover:scale-105"
+                          className="bg-white/80 dark:bg-gray-800/80 hover:bg-gradient-to-r hover:from-primary-100 hover:to-mental-100 dark:hover:from-primary-900/30 dark:hover:to-mental-900/30 text-gray-700 dark:text-gray-300 hover:text-primary-700 dark:hover:text-primary-300 px-2 py-1 rounded-lg text-xs font-medium transition-all duration-300 shadow-sm hover:shadow-md border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm hover:scale-105 whitespace-nowrap"
                         >
                           {suggestion}
                         </motion.button>
@@ -683,15 +665,15 @@ Please provide a supportive, helpful response that follows these guidelines. DO 
           </div>
 
           {/* Input Area - Fixed at bottom */}
-          <div className={`p-6 border-t border-gray-200/60 dark:border-gray-700/60 flex-shrink-0 bg-gradient-to-t from-white/95 to-white/80 dark:from-gray-900/95 dark:to-gray-900/80 backdrop-blur-xl`}>
-            <div className="flex space-x-4">
+          <div className={`p-3 sm:p-4 lg:p-6 border-t border-gray-200/60 dark:border-gray-700/60 flex-shrink-0 bg-gradient-to-t from-white/95 to-white/80 dark:from-gray-900/95 dark:to-gray-900/80 backdrop-blur-xl`}>
+            <div className="flex space-x-2 sm:space-x-3 lg:space-x-4">
               <input
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSendMessage(inputMessage)}
                 placeholder={t('placeholder')}
-                className={`flex-1 px-6 py-4 border-2 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-300 font-medium ${
+                className={`flex-1 px-3 sm:px-4 lg:px-6 py-2.5 sm:py-3 lg:py-4 border-2 rounded-lg sm:rounded-xl lg:rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-300 font-medium text-sm sm:text-base mobile-text-size ${
                   isDarkMode 
                     ? 'border-gray-600/50 bg-gray-800/80 text-white placeholder-gray-400 backdrop-blur-sm' 
                     : 'border-gray-300/50 bg-white/80 text-gray-800 placeholder-gray-500 backdrop-blur-sm'
@@ -703,9 +685,9 @@ Please provide a supportive, helpful response that follows these guidelines. DO 
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleSendMessage(inputMessage)}
                 disabled={!inputMessage.trim() || isLoading}
-                className="bg-gradient-to-r from-primary-500 to-mental-500 hover:from-primary-600 hover:to-mental-600 disabled:from-gray-300 disabled:to-gray-400 text-white p-4 rounded-2xl transition-all duration-300 disabled:cursor-not-allowed shadow-lg hover:shadow-xl border-2 border-primary-400/20 hover:border-primary-400/40"
+                className="bg-gradient-to-r from-primary-500 to-mental-500 hover:from-primary-600 hover:to-mental-600 disabled:from-gray-300 disabled:to-gray-400 text-white p-2.5 sm:p-3 lg:p-4 rounded-lg sm:rounded-xl lg:rounded-2xl transition-all duration-300 disabled:cursor-not-allowed shadow-lg hover:shadow-xl border-2 border-primary-400/20 hover:border-primary-400/40"
               >
-                {isLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Send className="w-6 h-6" />}
+                {isLoading ? <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 animate-spin" /> : <Send className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />}
               </motion.button>
             </div>
           </div>

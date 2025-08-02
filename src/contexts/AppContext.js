@@ -8,8 +8,8 @@ const AppContext = createContext();
 const initialState = {
   isDarkMode: false,
   moodHistory: [],
-  conversations: [], // Array of separate conversations
-  currentConversationId: null, // ID of the current active conversation
+  conversations: [],
+  currentConversationId: null,
   userPreferences: {
     language: 'en',
     notifications: true,
@@ -102,7 +102,7 @@ const appReducer = (state, action) => {
     case 'RESET_STATE':
       return {
         ...initialState,
-        isDarkMode: state.isDarkMode // Preserve dark mode preference
+        isDarkMode: state.isDarkMode
       };
     
     case 'UPDATE_PREFERENCES':
@@ -126,13 +126,10 @@ export const AppProvider = ({ children }) => {
   const [lastUserId, setLastUserId] = useState(null);
   const [isLoadingUserData, setIsLoadingUserData] = useState(false);
 
-  // Enhanced user data isolation logic
   useEffect(() => {
-    console.log(`AppContext: User effect triggered - user: ${user?.id}, lastUserId: ${lastUserId}, isInitialized: ${isInitialized}, isLoadingUserData: ${isLoadingUserData}`);
+
     
-    // If no user, clear everything and reset
     if (!user) {
-      console.log('No user detected, clearing all data...');
       dispatch({ type: 'RESET_STATE' });
       setIsInitialized(false);
       setLastUserId(null);
@@ -140,49 +137,37 @@ export const AppProvider = ({ children }) => {
       return;
     }
 
-    // If this is a different user, clear everything first
     if (lastUserId && lastUserId !== user.id) {
-      console.log(`User changed from ${lastUserId} to ${user.id}, clearing data...`);
       dispatch({ type: 'RESET_STATE' });
       setIsInitialized(false);
       setIsLoadingUserData(false);
     }
 
-    // Set the current user ID
     setLastUserId(user.id);
 
-    // Load user data if not already loading and not initialized for this user
     if (!isLoadingUserData && !isInitialized) {
-      console.log(`Starting to load data for user: ${user.id}`);
       setIsLoadingUserData(true);
       
       const loadUserData = async () => {
         try {
-          console.log(`Loading data for user: ${user.id}`);
           const userData = await dbService.loadUserData(user.id);
           
-          // Reset state to initial values first to ensure clean slate
           dispatch({ type: 'RESET_STATE' });
           
-          // Set dark mode
           if (userData.dark_mode) {
             dispatch({ type: 'TOGGLE_DARK_MODE' });
           }
           
-          // Set mood history
           if (userData.mood_history && userData.mood_history.length > 0) {
             userData.mood_history.forEach(mood => {
               dispatch({ type: 'ADD_MOOD_ENTRY', payload: mood });
             });
           }
           
-          // Restore conversations with decryption
           if (userData.conversations && userData.conversations.length > 0) {
-            // Generate user-specific decryption key
             const userKey = generateUserKey(user.id, user.email);
             
             userData.conversations.forEach(conv => {
-              // Decrypt messages in each conversation
               const decryptedMessages = decryptMessages(conv.messages, userKey);
               
               dispatch({ 
@@ -198,7 +183,6 @@ export const AppProvider = ({ children }) => {
             });
           }
           
-          // Set current conversation
           if (userData.current_conversation_id) {
             const conversationExists = userData.conversations?.some(conv => conv.id === userData.current_conversation_id);
             if (conversationExists) {
@@ -206,23 +190,17 @@ export const AppProvider = ({ children }) => {
             }
           }
           
-          // Set preferences
           if (userData.preferences && Object.keys(userData.preferences).length > 0) {
             dispatch({ type: 'UPDATE_PREFERENCES', payload: userData.preferences });
           }
           
-          console.log(`Successfully loaded data for user: ${user.id}`);
-          
-          // Verify data isolation for debugging
           try {
             await dbService.verifyUserDataIsolation(user.id);
           } catch (error) {
-            console.warn('Data isolation verification failed:', error);
           }
           
           setIsInitialized(true);
         } catch (error) {
-          console.error(`Error loading data for user ${user.id}:`, error);
           setIsInitialized(true);
         } finally {
           setIsLoadingUserData(false);
@@ -231,11 +209,10 @@ export const AppProvider = ({ children }) => {
 
       loadUserData();
     }
-  }, [user?.id, lastUserId, isInitialized, isLoadingUserData, user]); // Include all dependencies
+  }, [user?.id, lastUserId, isInitialized, isLoadingUserData, user]);
 
 
 
-  // Save data to Supabase whenever state changes - Only save after initialization
   useEffect(() => {
     if (!user || !isInitialized || isLoadingUserData) return;
     
@@ -252,11 +229,7 @@ export const AppProvider = ({ children }) => {
           messages: encryptMessages(conversation.messages, userKey)
         }));
         
-        console.log(`Saving encrypted data for user: ${userId}`, {
-          conversationsCount: encryptedConversations?.length || 0,
-          moodHistoryCount: state.moodHistory?.length || 0,
-          currentConversationId: state.currentConversationId
-        });
+
         
         await dbService.saveUserData(userId, {
           conversations: encryptedConversations,
@@ -265,14 +238,12 @@ export const AppProvider = ({ children }) => {
           isDarkMode: state.isDarkMode,
           currentConversationId: state.currentConversationId
         });
-        console.log(`Successfully saved encrypted data for user: ${userId}`);
       } catch (error) {
-        console.error(`Error saving encrypted data for user ${user.id}:`, error);
       }
     };
 
     saveData();
-  }, [state, user, isInitialized, isLoadingUserData]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [state, user, isInitialized, isLoadingUserData]);
 
   const toggleDarkMode = () => {
     dispatch({ type: 'TOGGLE_DARK_MODE' });

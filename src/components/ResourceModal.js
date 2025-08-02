@@ -9,7 +9,6 @@ const ResourceModal = ({ isOpen, onClose, resource }) => {
 
 
   const handleStartJourney = () => {
-    // Create a more meaningful action for the Start Your Journey button
     const journeyActions = {
       "Understanding Anxiety": {
         title: "Let's begin your anxiety management journey!",
@@ -98,10 +97,7 @@ const ResourceModal = ({ isOpen, onClose, resource }) => {
     
     setShowNotification(true);
     
-    // Remove the automatic modal closing - let users close it manually
-    // setTimeout(() => {
-    //   onClose();
-    // }, 500);
+
   };
 
   const closeNotification = () => {

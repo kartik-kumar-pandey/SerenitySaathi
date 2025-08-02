@@ -20,7 +20,6 @@ const PasswordResetModal = ({ isOpen, onClose }) => {
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -57,12 +56,10 @@ const PasswordResetModal = ({ isOpen, onClose }) => {
       await updatePassword(formData.password);
       setSuccess(true);
       
-      // Close the modal immediately after successful password update
       setTimeout(() => {
         handleClose();
-      }, 1000); // Just a brief moment to show success
+      }, 1000);
     } catch (error) {
-      console.error('Password update error:', error);
     }
   };
 

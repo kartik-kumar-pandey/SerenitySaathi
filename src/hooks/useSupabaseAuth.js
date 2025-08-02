@@ -6,9 +6,7 @@ export const useSupabaseAuth = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Listen for auth state changes
   useEffect(() => {
-    // Get initial session
     const getInitialSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
@@ -25,7 +23,6 @@ export const useSupabaseAuth = () => {
 
     getInitialSession();
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (session?.user) {
@@ -46,7 +43,6 @@ export const useSupabaseAuth = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Sign up function
   const signup = async (name, email, password) => {
     setError(null);
     setLoading(true);
@@ -89,13 +85,11 @@ export const useSupabaseAuth = () => {
     }
   };
 
-  // Login function
   const login = async (email, password) => {
     setError(null);
     setLoading(true);
     
     try {
-      console.log('Attempting Supabase login with:', { email, password: '***' });
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
@@ -103,10 +97,8 @@ export const useSupabaseAuth = () => {
 
       if (error) throw error;
 
-      console.log('Supabase login successful:', data.user);
       return data.user;
     } catch (error) {
-      console.error('Supabase login error:', error);
       let errorMessage = 'An error occurred during login';
       
       switch (error.message) {
@@ -130,25 +122,19 @@ export const useSupabaseAuth = () => {
     }
   };
 
-  // Logout function
   const logout = async () => {
     setError(null);
     try {
-      // Clear user data from local state first
       setUser(null);
       
-      // Sign out from Supabase
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      
-      console.log('User logged out successfully');
     } catch (error) {
       setError('An error occurred during logout');
       throw error;
     }
   };
 
-  // Password reset function
   const resetPassword = async (email) => {
     setError(null);
     try {
@@ -173,7 +159,6 @@ export const useSupabaseAuth = () => {
     }
   };
 
-  // Update user profile
   const updateUserProfile = async (updates) => {
     setError(null);
     try {
@@ -183,7 +168,6 @@ export const useSupabaseAuth = () => {
 
       if (error) throw error;
 
-      // Update local user state
       if (data.user) {
         setUser(prev => ({
           ...prev,

@@ -21,7 +21,6 @@ const UserProfile = ({ isOpen, onClose }) => {
       await logout();
       onClose();
     } catch (error) {
-      console.error('Logout error:', error);
     } finally {
       setIsLoading(false);
     }

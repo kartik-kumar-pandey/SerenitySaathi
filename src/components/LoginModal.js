@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Eye, EyeOff, Mail, Lock, User, Shield, Heart, ArrowLeft } from 'lucide-react';
+import { X, Eye, EyeOff, Mail, Lock, User, Shield, Heart, ArrowLeft, CheckCircle } from 'lucide-react';
 
 const LoginModal = ({ isOpen, onClose, onLogin, onSignup, onResetPassword }) => {
   const [isLoginMode, setIsLoginMode] = useState(true);
@@ -13,6 +13,7 @@ const LoginModal = ({ isOpen, onClose, onLogin, onSignup, onResetPassword }) => 
   });
   const [errors, setErrors] = useState({});
   const [authError, setAuthError] = useState('');
+  const [authSuccess, setAuthSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
@@ -25,16 +26,17 @@ const LoginModal = ({ isOpen, onClose, onLogin, onSignup, onResetPassword }) => 
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
         [name]: ''
       }));
     }
-    // Clear auth error when user starts typing
     if (authError) {
       setAuthError('');
+    }
+    if (authSuccess) {
+      setAuthSuccess('');
     }
   };
 
@@ -75,15 +77,20 @@ const LoginModal = ({ isOpen, onClose, onLogin, onSignup, onResetPassword }) => 
 
     setIsLoading(true);
     setAuthError('');
+    setAuthSuccess('');
     
     try {
       if (isLoginMode) {
         await onLogin(formData.email, formData.password);
+        setAuthSuccess('Login successful! Welcome back.');
+        setTimeout(() => {
+          onClose();
+        }, 1000);
       } else {
         await onSignup(formData.name, formData.email, formData.password);
+        setAuthSuccess('Account created successfully! Please check your email for verification.');
       }
     } catch (error) {
-      console.error('Authentication error:', error);
       setAuthError(error.message || 'An error occurred during authentication');
     } finally {
       setIsLoading(false);
@@ -100,6 +107,7 @@ const LoginModal = ({ isOpen, onClose, onLogin, onSignup, onResetPassword }) => 
     });
     setErrors({});
     setAuthError('');
+    setAuthSuccess('');
   };
 
   const handleForgotPassword = async (e) => {
@@ -122,7 +130,6 @@ const LoginModal = ({ isOpen, onClose, onLogin, onSignup, onResetPassword }) => 
       await onResetPassword(forgotPasswordEmail);
       setForgotPasswordSuccess(true);
     } catch (error) {
-      console.error('Forgot password error:', error);
       setForgotPasswordError(error.message || 'An error occurred while sending reset email');
     } finally {
       setIsLoading(false);
@@ -235,19 +242,19 @@ const LoginModal = ({ isOpen, onClose, onLogin, onSignup, onResetPassword }) => 
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                     <input
-                     type={showPassword ? 'text' : 'password'}
-                     name="password"
-                     value={formData.password}
-                     onChange={handleInputChange}
-                     className={`w-full pl-10 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
-                       errors.password ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                     } bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
-                     placeholder="Enter your password"
-                     style={{ 
-                       WebkitTextSecurity: showPassword ? 'none' : 'disc'
-                     }}
-                   />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className={`w-full pl-10 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
+                      errors.password ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    } bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
+                    placeholder="Enter your password"
+                    style={{ 
+                      WebkitTextSecurity: showPassword ? 'none' : 'disc'
+                    }}
+                  />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
@@ -283,19 +290,19 @@ const LoginModal = ({ isOpen, onClose, onLogin, onSignup, onResetPassword }) => 
                   </label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                         <input
-                       type={showPassword ? 'text' : 'password'}
-                       name="confirmPassword"
-                       value={formData.confirmPassword}
-                       onChange={handleInputChange}
-                       className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
-                         errors.confirmPassword ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                       } bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
-                       placeholder="Confirm your password"
-                       style={{ 
-                         WebkitTextSecurity: showPassword ? 'none' : 'disc'
-                       }}
-                     />
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleInputChange}
+                      className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
+                        errors.confirmPassword ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      } bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
+                      placeholder="Confirm your password"
+                      style={{ 
+                        WebkitTextSecurity: showPassword ? 'none' : 'disc'
+                      }}
+                    />
                   </div>
                   {errors.confirmPassword && (
                     <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
@@ -307,6 +314,14 @@ const LoginModal = ({ isOpen, onClose, onLogin, onSignup, onResetPassword }) => 
               {authError && (
                 <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
                   <p className="text-red-600 dark:text-red-400 text-sm">{authError}</p>
+                </div>
+              )}
+
+              {/* Authentication Success */}
+              {authSuccess && (
+                <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl flex items-center space-x-2">
+                  <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0" />
+                  <p className="text-green-600 dark:text-green-400 text-sm">{authSuccess}</p>
                 </div>
               )}
 
@@ -364,15 +379,15 @@ const LoginModal = ({ isOpen, onClose, onLogin, onSignup, onResetPassword }) => 
           </div>
         </motion.div>
 
-                 {/* Forgot Password Modal */}
-         <AnimatePresence>
-           {showForgotPassword && (
-             <motion.div
-               initial={{ opacity: 0 }}
-               animate={{ opacity: 1 }}
-               exit={{ opacity: 0 }}
-               className="fixed inset-0 z-[70] flex items-center justify-center p-4"
-             >
+        {/* Forgot Password Modal */}
+        <AnimatePresence>
+          {showForgotPassword && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[70] flex items-center justify-center p-4"
+            >
               {/* Backdrop */}
               <motion.div
                 initial={{ opacity: 0 }}
@@ -435,13 +450,13 @@ const LoginModal = ({ isOpen, onClose, onLogin, onSignup, onResetPassword }) => 
                           </label>
                           <div className="relative">
                             <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                                         <input
-                               type="email"
-                               value={forgotPasswordEmail}
-                               onChange={(e) => setForgotPasswordEmail(e.target.value)}
-                               className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-                               placeholder="Enter your email"
-                             />
+                            <input
+                              type="email"
+                              value={forgotPasswordEmail}
+                              onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                              className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                              placeholder="Enter your email"
+                            />
                           </div>
                         </div>
 

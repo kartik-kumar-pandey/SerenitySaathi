@@ -9,14 +9,12 @@ export const SupabaseAuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Get initial session
     const getInitialSession = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) {
-          console.error('Error getting session:', error);
-          setError(error.message);
-        } else if (session) {
+             try {
+         const { data: { session }, error } = await supabase.auth.getSession();
+         if (error) {
+           setError(error.message);
+         } else if (session) {
           setUser({
             id: session.user.id,
             email: session.user.email,
@@ -25,20 +23,17 @@ export const SupabaseAuthProvider = ({ children }) => {
             last_sign_in_at: session.user.last_sign_in_at
           });
         }
-      } catch (error) {
-        console.error('Error in getInitialSession:', error);
-        setError(error.message);
-      } finally {
+             } catch (error) {
+         setError(error.message);
+       } finally {
         setIsLoading(false);
       }
     };
 
     getInitialSession();
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.id);
+         const { data: { subscription } } = supabase.auth.onAuthStateChange(
+       async (event, session) => {
         
         if (event === 'SIGNED_IN' && session) {
           setUser({
@@ -60,9 +55,7 @@ export const SupabaseAuthProvider = ({ children }) => {
             created_at: session.user.created_at,
             last_sign_in_at: session.user.last_sign_in_at
           });
-        } else if (event === 'PASSWORD_RECOVERY' && session) {
-          console.log('Password recovery event detected');
-          // This event is triggered when user clicks reset link
+                 } else if (event === 'PASSWORD_RECOVERY' && session) {
           setUser({
             id: session.user.id,
             email: session.user.email,
@@ -71,7 +64,6 @@ export const SupabaseAuthProvider = ({ children }) => {
             last_sign_in_at: session.user.last_sign_in_at
           });
           
-          // Dispatch custom event to trigger password reset modal
           window.dispatchEvent(new CustomEvent('password-recovery'));
         }
         
@@ -93,7 +85,6 @@ export const SupabaseAuthProvider = ({ children }) => {
       });
 
       if (error) {
-        // Provide more user-friendly error messages
         let userFriendlyMessage = error.message;
         if (error.message.includes('Invalid login credentials')) {
           userFriendlyMessage = 'Invalid email or password. Please check your credentials and try again.';
@@ -102,20 +93,17 @@ export const SupabaseAuthProvider = ({ children }) => {
         } else if (error.message.includes('Too many requests')) {
           userFriendlyMessage = 'Too many login attempts. Please wait a moment before trying again.';
         }
-        setError(userFriendlyMessage);
-        throw error;
+        throw new Error(userFriendlyMessage);
       }
 
       return data;
     } catch (error) {
-      console.error('Login error:', error);
-      // Don't set error again if already set above
-      if (!error.message.includes('Invalid login credentials') && 
-          !error.message.includes('Email not confirmed') && 
-          !error.message.includes('Too many requests')) {
-        setError('An unexpected error occurred. Please try again.');
+      if (error.message.includes('Invalid email or password') || 
+          error.message.includes('Please check your email') || 
+          error.message.includes('Too many login attempts')) {
+        throw error;
       }
-      throw error;
+      throw new Error('An unexpected error occurred. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -137,7 +125,6 @@ export const SupabaseAuthProvider = ({ children }) => {
       });
 
       if (error) {
-        // Provide more user-friendly error messages
         let userFriendlyMessage = error.message;
         if (error.message.includes('User already registered')) {
           userFriendlyMessage = 'An account with this email already exists. Please try logging in instead.';
@@ -148,21 +135,18 @@ export const SupabaseAuthProvider = ({ children }) => {
         } else if (error.message.includes('Unable to validate email address')) {
           userFriendlyMessage = 'Unable to validate email address. Please check your email and try again.';
         }
-        setError(userFriendlyMessage);
-        throw error;
+        throw new Error(userFriendlyMessage);
       }
 
       return data;
     } catch (error) {
-      console.error('Signup error:', error);
-      // Don't set error again if already set above
-      if (!error.message.includes('User already registered') && 
-          !error.message.includes('Password should be at least') && 
-          !error.message.includes('Invalid email') && 
-          !error.message.includes('Unable to validate email address')) {
-        setError('An unexpected error occurred during signup. Please try again.');
+      if (error.message.includes('An account with this email already exists') || 
+          error.message.includes('Password must be at least') || 
+          error.message.includes('Please enter a valid email') || 
+          error.message.includes('Unable to validate email address')) {
+        throw error;
       }
-      throw error;
+      throw new Error('An unexpected error occurred during signup. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -173,18 +157,12 @@ export const SupabaseAuthProvider = ({ children }) => {
       setIsLoading(true);
       setError(null);
       
-      // Save current user data before logout to ensure it persists
-      if (user) {
-        try {
-          console.log('Saving user data before logout...');
-          // Note: We can't access the current app state here, but the data should already be saved
-          // from the AppContext's save effect
-        } catch (saveError) {
-          console.warn('Could not save data before logout:', saveError);
-        }
-      }
+       if (user) {
+         try {
+         } catch (saveError) {
+         }
+       }
       
-      // Sign out from Supabase (this will clear the session but keep data in database)
       const { error } = await supabase.auth.signOut();
       
       if (error) {
@@ -192,13 +170,9 @@ export const SupabaseAuthProvider = ({ children }) => {
         throw error;
       }
       
-      // Clear local user state
-      setUser(null);
-      setError(null);
-      
-      console.log('User logged out successfully. Data remains in database for next login.');
+       setUser(null);
+       setError(null);
     } catch (error) {
-      console.error('Logout error:', error);
       setError(error.message);
       throw error;
     } finally {
@@ -220,7 +194,6 @@ export const SupabaseAuthProvider = ({ children }) => {
         throw error;
       }
     } catch (error) {
-      console.error('Reset password error:', error);
       setError(error.message);
       throw error;
     } finally {
@@ -242,7 +215,6 @@ export const SupabaseAuthProvider = ({ children }) => {
         throw error;
       }
     } catch (error) {
-      console.error('Update password error:', error);
       setError(error.message);
       throw error;
     } finally {
@@ -277,7 +249,6 @@ export const SupabaseAuthProvider = ({ children }) => {
 
       return data;
     } catch (error) {
-      console.error('Update profile error:', error);
       setError(error.message);
       throw error;
     } finally {

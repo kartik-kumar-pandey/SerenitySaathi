@@ -15,7 +15,6 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Load user from localStorage on app start
   useEffect(() => {
     const loadUser = () => {
       try {
@@ -25,7 +24,6 @@ export const AuthProvider = ({ children }) => {
           setUser(userData);
         }
       } catch (error) {
-        console.error('Error loading user data:', error);
         localStorage.removeItem('mitra_user');
       } finally {
         setIsLoading(false);
@@ -35,20 +33,16 @@ export const AuthProvider = ({ children }) => {
     loadUser();
   }, []);
 
-  // Save user data to localStorage
   const saveUserToStorage = (userData) => {
     try {
               localStorage.setItem('mitra_user', JSON.stringify(userData));
     } catch (error) {
-      console.error('Error saving user data:', error);
     }
   };
 
-  // Clear user data from localStorage
   const clearUserFromStorage = () => {
     try {
               localStorage.removeItem('mitra_user');
-      // Also clear any user-specific data
       const keys = Object.keys(localStorage);
       keys.forEach(key => {
         if (key.startsWith('mitra_')) {
@@ -56,20 +50,16 @@ export const AuthProvider = ({ children }) => {
         }
       });
     } catch (error) {
-      console.error('Error clearing user data:', error);
     }
   };
 
-  // Sign up function
   const signup = async (name, email, password) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // Simulate API call - in a real app, this would be a backend API
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Check if user already exists (simulate)
       const existingUsers = JSON.parse(localStorage.getItem('mitra_users') || '[]');
       const existingUser = existingUsers.find(u => u.email === email);
       
@@ -77,12 +67,11 @@ export const AuthProvider = ({ children }) => {
         throw new Error('User with this email already exists');
       }
 
-      // Create new user
       const newUser = {
         id: Date.now().toString(),
         name,
         email,
-        password: btoa(password), // Simple encoding - in real app, use proper hashing
+        password: btoa(password),
         createdAt: new Date().toISOString(),
         preferences: {
           theme: 'light',
@@ -91,13 +80,11 @@ export const AuthProvider = ({ children }) => {
         }
       };
 
-      // Save to users list
       existingUsers.push(newUser);
               localStorage.setItem('mitra_users', JSON.stringify(existingUsers));
 
-      // Set current user
       const userData = { ...newUser };
-      delete userData.password; // Don't store password in user state
+      delete userData.password;
       setUser(userData);
       saveUserToStorage(userData);
 
@@ -110,16 +97,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Login function
   const login = async (email, password) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Check user credentials
       const users = JSON.parse(localStorage.getItem('mitra_users') || '[]');
       const user = users.find(u => u.email === email && btoa(password) === u.password);
 
@@ -127,9 +111,8 @@ export const AuthProvider = ({ children }) => {
         throw new Error('Invalid email or password');
       }
 
-      // Set current user
       const userData = { ...user };
-      delete userData.password; // Don't store password in user state
+      delete userData.password;
       setUser(userData);
       saveUserToStorage(userData);
 
@@ -206,7 +189,7 @@ export const AuthProvider = ({ children }) => {
       try {
         localStorage.setItem(dataKey, JSON.stringify(data));
       } catch (error) {
-        console.error('Error saving user data:', error);
+        // Silent error handling
       }
     }
   };
@@ -219,7 +202,6 @@ export const AuthProvider = ({ children }) => {
         const saved = localStorage.getItem(dataKey);
         return saved ? JSON.parse(saved) : defaultValue;
       } catch (error) {
-        console.error('Error loading user data:', error);
         return defaultValue;
       }
     }
