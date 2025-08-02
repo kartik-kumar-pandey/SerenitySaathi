@@ -1,0 +1,777 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom CSS Variables */
+:root {
+  --primary-50: #f0f9ff;
+  --primary-100: #e0f2fe;
+  --primary-200: #bae6fd;
+  --primary-300: #7dd3fc;
+  --primary-400: #38bdf8;
+  --primary-500: #0ea5e9;
+  --primary-600: #0284c7;
+  --primary-700: #0369a1;
+  --primary-800: #075985;
+  --primary-900: #0c4a6e;
+  
+  --mental-50: #fdf4ff;
+  --mental-100: #fae8ff;
+  --mental-200: #f5d0fe;
+  --mental-300: #f0abfc;
+  --mental-400: #e879f9;
+  --mental-500: #d946ef;
+  --mental-600: #c026d3;
+  --mental-700: #a21caf;
+  --mental-800: #86198f;
+  --mental-900: #701a75;
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* Dark mode body background */
+.dark {
+  background: linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #1a1a1a 100%);
+}
+
+/* Override gradient-hero background in dark mode */
+.dark .gradient-hero {
+  background: linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #1a1a1a 100%) !important;
+}
+
+/* Light mode body background - fixed selector */
+body.light {
+  background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 50%, #fef3c7 100%);
+}
+
+/* Light mode body background - target the div with light class */
+.light {
+  background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 50%, #fef3c7 100%) !important;
+}
+
+/* Ensure the gradient-hero background is also light in light mode */
+.light .gradient-hero {
+  background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 50%, #fef3c7 100%) !important;
+}
+
+/* Fix for mood section and chat history sidebar in light mode */
+.light .bg-gray-800,
+.light .bg-gray-700,
+.light .bg-gray-600 {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Ensure chat history sidebar has light background in light mode */
+.light .chat-history-sidebar {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(229, 231, 235, 0.8) !important;
+}
+
+/* Fix for any remaining dark backgrounds in light mode */
+.light [class*="bg-gray-8"],
+.light [class*="bg-gray-7"],
+.light [class*="bg-gray-6"] {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Specific fixes for components */
+.light .dark\\:bg-gray-800 {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.light .dark\\:bg-gray-700 {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.light .dark\\:bg-gray-600 {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Fix for input backgrounds in light mode */
+.light input[type="range"] {
+  background-color: #e5e7eb !important;
+}
+
+/* Fix for progress bars and sliders in light mode */
+.light .bg-gray-200 {
+  background-color: #e5e7eb !important;
+}
+
+/* Fix for mood selection buttons in light mode */
+.light .bg-gradient-to-br {
+  background-image: none !important;
+}
+
+/* Ensure mood buttons have light backgrounds in light mode */
+.light .bg-gradient-to-br.from-green-200 {
+  background-color: #dcfce7 !important;
+}
+
+.light .bg-gradient-to-br.from-yellow-200 {
+  background-color: #fef3c7 !important;
+}
+
+.light .bg-gradient-to-br.from-pink-200 {
+  background-color: #fce7f3 !important;
+}
+
+.light .bg-gradient-to-br.from-gray-200 {
+  background-color: #f3f4f6 !important;
+}
+
+.light .bg-gradient-to-br.from-blue-200 {
+  background-color: #dbeafe !important;
+}
+
+.light .bg-gradient-to-br.from-purple-200 {
+  background-color: #f3e8ff !important;
+}
+
+/* Fix for any remaining dark backgrounds in mood cards */
+.light .dark\\:bg-gray-700 {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Ensure mood card gradients work properly in light mode */
+.light .bg-gradient-to-br.from-green-200.via-emerald-200.to-teal-200 {
+  background: linear-gradient(to bottom right, #dcfce7, #d1fae5, #ccfbf1) !important;
+}
+
+.light .bg-gradient-to-br.from-yellow-200.via-orange-200.to-red-200 {
+  background: linear-gradient(to bottom right, #fef3c7, #fed7aa, #fecaca) !important;
+}
+
+.light .bg-gradient-to-br.from-pink-200.via-rose-200.to-fuchsia-200 {
+  background: linear-gradient(to bottom right, #fce7f3, #fecdd3, #f5d0fe) !important;
+}
+
+.light .bg-gradient-to-br.from-gray-200.via-slate-200.to-zinc-200 {
+  background: linear-gradient(to bottom right, #f3f4f6, #e2e8f0, #f4f4f5) !important;
+}
+
+.light .bg-gradient-to-br.from-blue-200.via-indigo-200.to-purple-200 {
+  background: linear-gradient(to bottom right, #dbeafe, #c7d2fe, #e9d5ff) !important;
+}
+
+.light .bg-gradient-to-br.from-purple-200.via-violet-200.to-indigo-200 {
+  background: linear-gradient(to bottom right, #f3e8ff, #ddd6fe, #c7d2fe) !important;
+}
+
+/* Ensure interactive elements work properly */
+.light button,
+.light input,
+.light textarea {
+  pointer-events: auto !important;
+  z-index: 1 !important;
+}
+
+/* Ensure mood selection buttons are clickable */
+.light .motion-button,
+.light button[onClick] {
+  pointer-events: auto !important;
+  z-index: 10 !important;
+  position: relative !important;
+}
+
+/* Fix for intensity slider in light mode */
+.light input[type="range"] {
+  background-color: #e5e7eb !important;
+  pointer-events: auto !important;
+  z-index: 1 !important;
+}
+
+/* Fix for textarea in light mode */
+.light textarea {
+  background: linear-gradient(to bottom right, #dcfce7, #dbeafe) !important;
+  pointer-events: auto !important;
+  z-index: 1 !important;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.5);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.8);
+}
+
+/* Chat History Scrollbar */
+.chat-history-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-history-scrollbar::-webkit-scrollbar-track {
+  background: rgba(243, 244, 246, 0.5);
+  border-radius: 4px;
+}
+
+.chat-history-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.6);
+  border-radius: 4px;
+}
+
+.chat-history-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.8);
+}
+
+/* Dark mode chat history scrollbar */
+.dark .chat-history-scrollbar::-webkit-scrollbar-track {
+  background: rgba(55, 65, 81, 0.5);
+}
+
+.dark .chat-history-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.4);
+}
+
+.dark .chat-history-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.6);
+}
+
+/* Messages Container Scrollbar */
+.messages-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.messages-scrollbar::-webkit-scrollbar-track {
+  background: rgba(243, 244, 246, 0.3);
+  border-radius: 4px;
+}
+
+.messages-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.5);
+  border-radius: 4px;
+}
+
+.messages-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.7);
+}
+
+/* Dark mode messages scrollbar */
+.dark .messages-scrollbar::-webkit-scrollbar-track {
+  background: rgba(55, 65, 81, 0.3);
+}
+
+.dark .messages-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.4);
+}
+
+.dark .messages-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.6);
+}
+
+/* Custom Scrollbar Hide */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Chat Bubble Styles */
+.chat-bubble {
+  @apply rounded-2xl px-4 py-3 shadow-lg max-w-xs lg:max-w-md;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-bubble {
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  color: white;
+  border-radius: 18px 18px 4px 18px;
+}
+
+.bot-bubble {
+  background: rgba(255, 255, 255, 0.95);
+  color: #1f2937;
+  border-radius: 18px 18px 18px 4px;
+  border: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+.bot-bubble.dark {
+  background: rgba(55, 65, 81, 0.95);
+  color: #f9fafb;
+  border: 1px solid rgba(75, 85, 99, 0.5);
+}
+
+/* Glass Morphism Effect */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+  background: rgba(31, 41, 55, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+/* Gradient Backgrounds */
+.gradient-primary {
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+}
+
+.gradient-mental {
+  background: linear-gradient(135deg, var(--mental-500), var(--mental-600));
+}
+
+.gradient-hero {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Button Styles */
+.btn-primary {
+  @apply bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-3 rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 active:scale-95;
+}
+
+.btn-secondary {
+  @apply bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full font-medium shadow-lg hover:bg-white/30 transition-all duration-200 transform hover:scale-105 active:scale-95;
+}
+
+.btn-ghost {
+  @apply bg-transparent hover:bg-white/10 text-white px-4 py-2 rounded-full transition-all duration-200;
+}
+
+/* Card Styles */
+.card {
+  @apply bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden;
+  backdrop-filter: blur(10px);
+}
+
+.card-dark {
+  @apply bg-gray-800 rounded-2xl shadow-xl border border-gray-700 overflow-hidden;
+  backdrop-filter: blur(10px);
+}
+
+/* Input Styles */
+.input-primary {
+  @apply w-full px-4 py-3 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200;
+}
+
+.input-dark {
+  @apply w-full px-4 py-3 border border-gray-600 bg-gray-700 text-white placeholder-gray-400 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200;
+}
+
+/* Animation Classes */
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+.bounce-in {
+  animation: bounceIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Loading Animation */
+.loading-dots {
+  display: inline-block;
+}
+
+.loading-dots::after {
+  content: '';
+  animation: dots 1.5s steps(5, end) infinite;
+}
+
+@keyframes dots {
+  0%, 20% { content: ''; }
+  40% { content: '.'; }
+  60% { content: '..'; }
+  80%, 100% { content: '...'; }
+}
+
+/* Hover Effects */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Focus Styles */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+}
+
+/* Text Gradients */
+.text-gradient {
+  background: linear-gradient(135deg, var(--primary-500), var(--mental-500));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Responsive Utilities */
+@media (max-width: 640px) {
+  .mobile-full {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+  }
+}
+
+/* Dark Mode Enhancements */
+.dark .glass {
+  background: rgba(31, 41, 55, 0.8);
+  border: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+.dark .card {
+  @apply bg-gray-800 border-gray-700;
+}
+
+/* Custom Focus for Accessibility */
+*:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+/* Smooth Transitions */
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+/* Enhanced Typography */
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Custom Shadows */
+.shadow-soft {
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+}
+
+.shadow-medium {
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-strong {
+  box-shadow: 0 8px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* Fix for light mode text visibility */
+.text-white\/80 {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.text-white\/60 {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Ensure proper contrast in both modes */
+.dark .text-white\/80 {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.dark .text-white\/60 {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Light mode text colors for better visibility */
+.light .text-white\/80,
+.light .text-white\/60 {
+  color: #374151;
+}
+
+/* Ensure proper text contrast in light mode */
+.text-gray-800 {
+  color: #1f2937;
+}
+
+.text-gray-600 {
+  color: #4b5563;
+}
+
+.text-gray-300 {
+  color: #d1d5db;
+}
+
+/* Light mode specific text colors */
+.light .text-gray-800 {
+  color: #1f2937;
+}
+
+.light .text-gray-600 {
+  color: #4b5563;
+}
+
+.light .text-gray-300 {
+  color: #6b7280;
+}
+
+/* Ensure better contrast for light mode elements */
+.light .bg-gray-50 {
+  background-color: #f9fafb;
+}
+
+.light .bg-gray-100 {
+  background-color: #f3f4f6;
+}
+
+/* Light mode navigation and toggle backgrounds */
+.light .bg-white\/20 {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.light .hover\:bg-white\/30:hover {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+.light .hover\:bg-white\/10:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+/* Light mode card backgrounds */
+.light .card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(229, 231, 235, 0.8);
+}
+
+/* Light mode glass effect */
+.light .glass {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(229, 231, 235, 0.8);
+}
+
+/* Light mode modal refinements */
+.light .bg-white\/80 {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.light .bg-gray-50 {
+  background-color: #f8fafc !important;
+}
+
+.light .bg-gray-100 {
+  background-color: #f1f5f9 !important;
+}
+
+.light .hover\:bg-gray-100:hover {
+  background-color: #e2e8f0 !important;
+}
+
+/* Light mode modal backdrop */
+.light .bg-black\/50 {
+  background-color: rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Light mode modal content */
+.light .bg-white {
+  background-color: #ffffff !important;
+}
+
+/* Light mode modal shadows */
+.light .shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Light mode text colors for modal */
+.light .text-gray-800 {
+  color: #1e293b !important;
+}
+
+.light .text-gray-600 {
+  color: #475569 !important;
+}
+
+.light .text-gray-300 {
+  color: #cbd5e1 !important;
+}
+
+/* Light mode border colors */
+.light .border-gray-200 {
+  border-color: #e2e8f0 !important;
+}
+
+.light .border-gray-700 {
+  border-color: #334155 !important;
+}
+
+/* Light mode button hover states */
+.light .hover\:bg-gray-200:hover {
+  background-color: #e2e8f0 !important;
+}
+
+.light .hover\:bg-gray-700:hover {
+  background-color: #475569 !important;
+}
+
+/* Light mode modal gradient refinements */
+.light .bg-gradient-to-r {
+  background-image: linear-gradient(to right, var(--tw-gradient-stops)) !important;
+}
+
+/* Light mode modal backdrop blur */
+.light .backdrop-blur-sm {
+  backdrop-filter: blur(4px) !important;
+}
+
+.light .backdrop-blur-md {
+  backdrop-filter: blur(12px) !important;
+}
+
+/* Light mode modal rounded corners */
+.light .rounded-2xl {
+  border-radius: 1rem !important;
+}
+
+.light .rounded-xl {
+  border-radius: 0.75rem !important;
+}
+
+/* Light mode modal focus states */
+.light .focus\:ring-2:focus {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5) !important;
+}
+
+/* Light mode modal transitions */
+.light .transition-all {
+  transition-property: all !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition-duration: 150ms !important;
+}
+
+/* Light mode modal z-index */
+.light .z-50 {
+  z-index: 50 !important;
+}
+
+.light .z-10 {
+  z-index: 10 !important;
+}
+
+/* Light mode navigation text colors */
+.light .text-white\/80 {
+  color: #374151;
+}
+
+.light .text-white {
+  color: #1f2937;
+}
+
+/* Ensure navigation icons are visible in light mode */
+.light .text-white\/80 svg,
+.light .text-white svg {
+  color: #374151;
+}
+
+.light .text-white\/80:hover svg,
+.light .text-white:hover svg {
+  color: #1f2937;
+}
+
+/* Light mode text colors for components */
+.light .text-white\/80 {
+  color: #374151;
+}
+
+.light .text-white {
+  color: #1f2937;
+}
+
+/* Light mode text colors for 60% opacity */
+.light .text-white\/60 {
+  color: #6b7280;
+}
+
+/* Fix for glass effect in light mode */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Ensure cards have proper background in light mode */
+.card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+/* Fix for text colors in light mode */
+.text-gray-800 {
+  color: #1f2937;
+}
+
+.text-gray-600 {
+  color: #4b5563;
+}
+
+.text-gray-300 {
+  color: #d1d5db;
+}
+
+/* Ensure proper button styling */
+.bg-white\/20 {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.hover\:bg-white\/30:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.hover\:bg-white\/10:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+} 
