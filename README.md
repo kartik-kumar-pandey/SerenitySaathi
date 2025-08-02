@@ -14,11 +14,12 @@ A beautiful, empathetic mental health chatbot built with React and Supabase, des
 - **Privacy Controls** - User-specific encryption keys and privacy settings
 
 ### 💬 **Chat & Communication**
-- **AI-Powered Conversations** - Empathetic chat interface with intelligent responses
+- **AI-Powered Conversations** - Powered by Google Gemini 2.0 Flash for intelligent, empathetic responses
 - **Conversation History** - All chats saved and restored across sessions with encryption
 - **Smart Suggestions** - Helpful prompts to get started with conversations
-- **Multi-language Support** - English and Hindi language options
+- **Multi-language Support** - English and Hindi language options with automatic language detection
 - **Encrypted Chat Export** - Secure export of conversation history
+- **Context-Aware Responses** - AI remembers conversation context for personalized interactions
 
 ### 🎨 **User Experience**
 - **Responsive Design** - Works perfectly on mobile and desktop
@@ -55,6 +56,12 @@ A beautiful, empathetic mental health chatbot built with React and Supabase, des
 - **Real-time Subscriptions** - Live data synchronization
 - **Encrypted Data Storage** - Application-level encryption before database storage
 
+### **AI & Machine Learning**
+- **Google Gemini 2.0 Flash** - Advanced AI model for natural conversations
+- **Mental Health Specialization** - Custom prompts for empathetic mental health support
+- **Multi-language AI** - Automatic language detection and response generation
+- **Context Awareness** - AI maintains conversation context for personalized interactions
+
 ### **Development Tools**
 - **Create React App** - React development environment
 - **PostCSS** - CSS processing
@@ -67,6 +74,7 @@ A beautiful, empathetic mental health chatbot built with React and Supabase, des
 - Node.js 16+ 
 - npm or yarn
 - Supabase account (free tier available)
+- Google Gemini API key (for AI chat functionality)
 
 ### Installation
 
@@ -85,6 +93,10 @@ A beautiful, empathetic mental health chatbot built with React and Supabase, des
    - Follow the [Supabase Setup Guide](SUPABASE_SETUP.md)
    - Configure your Supabase credentials in `src/supabase.js`
 
+4. **Configure AI Integration**
+   - Get your Google Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+   - Update the API key in `src/components/ChatInterface.js`
+
 4. **Start the development server**
    ```bash
    npm start
@@ -98,10 +110,11 @@ A beautiful, empathetic mental health chatbot built with React and Supabase, des
 ```
 serenitasaathi/
 ├── public/
-│   └── index.html
+│   ├── index.html
+│   └── logo_SerenitySaathi.png       # App logo
 ├── src/
 │   ├── components/
-│   │   ├── ChatInterface.js          # Main chat component
+│   │   ├── ChatInterface.js          # Main chat component with Gemini AI integration
 │   │   ├── UserProfile.js            # User profile and settings
 │   │   ├── LoginModal.js             # Authentication modal
 │   │   ├── PasswordResetModal.js     # Password reset functionality
@@ -124,6 +137,7 @@ serenitasaathi/
 │   ├── index.js                      # React entry point
 │   └── index.css                     # Global styles
 ├── SUPABASE_SETUP.md                 # Supabase configuration guide
+├── WORKFLOW.md                       # Application workflow documentation
 ├── package.json
 ├── tailwind.config.js
 └── README.md
@@ -286,6 +300,8 @@ SerenitySaathi is designed to provide supportive conversations and mental health
 - ✅ **Privacy Indicators** - Visual encryption status and privacy controls
 - ✅ **Enhanced Security** - No backdoor access to encrypted messages
 - ✅ **Privacy Settings** - Comprehensive privacy and security information
+- ✅ **Google Gemini 2.0 Flash Integration** - Advanced AI for intelligent conversations
+- ✅ **Multi-language AI Support** - Automatic language detection and response generation
 
 ### Version 2.0 Features
 - ✅ **Complete Authentication System** - Full user registration and login
