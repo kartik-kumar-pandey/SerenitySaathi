@@ -89,13 +89,19 @@ A beautiful, empathetic mental health chatbot built with React and Supabase, des
    npm install
    ```
 
-3. **Set up Supabase**
-   - Follow the [Supabase Setup Guide](SUPABASE_SETUP.md)
-   - Configure your Supabase credentials in `src/supabase.js`
+3. **Set up Environment Variables**
+   - Copy `env.example` to `.env`
+   - Update the following variables in your `.env` file:
+     ```bash
+     REACT_APP_SUPABASE_URL=your_supabase_url
+     REACT_APP_SUPABASE_ANON_KEY=your_supabase_anon_key
+     REACT_APP_GEMINI_API_KEY=your_gemini_api_key
+     REACT_APP_GEMINI_API_URL=https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent
+     ```
 
-4. **Configure AI Integration**
-   - Get your Google Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
-   - Update the API key in `src/components/ChatInterface.js`
+4. **Get API Keys**
+   - **Supabase**: Follow the [Supabase Setup Guide](SUPABASE_SETUP.md) to get your credentials
+   - **Google Gemini**: Get your API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
 
 4. **Start the development server**
    ```bash

@@ -22,11 +22,11 @@ SerenitySaathi now includes:
 ## Step 2: Get Your Credentials
 1. In your Supabase dashboard, go to Settings > API
 2. Copy your Project URL and anon/public key
-3. Update `src/supabase.js` with your credentials:
+3. Update your `.env` file with your credentials:
 
-```javascript
-const supabaseUrl = 'https://your-project-id.supabase.co'
-const supabaseAnonKey = 'your-anon-key-here'
+```bash
+REACT_APP_SUPABASE_URL=https://your-project-id.supabase.co
+REACT_APP_SUPABASE_ANON_KEY=your-anon-key-here
 ```
 
 ## Step 3: Configure Authentication
@@ -103,7 +103,7 @@ CREATE POLICY "Users can delete own data" ON user_data
 ### "Failed to load resource: 400" Error
 - **Cause**: Supabase project not properly configured
 - **Solution**:
-  1. Check your credentials in `src/supabase.js`
+  1. Check your credentials in `.env` file
   2. Make sure your Supabase project is active
   3. Verify the project URL is correct
 

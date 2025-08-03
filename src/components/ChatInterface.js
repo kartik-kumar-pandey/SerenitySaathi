@@ -61,8 +61,12 @@ const ChatInterface = () => {
   ];
 
   // Gemini API configuration
-  const GEMINI_API_KEY = "AIzaSyAyXbvpjk1OiG18lZloxPXnBo-3XTWLVUs";
-  const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+  const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
+  const GEMINI_API_URL = process.env.REACT_APP_GEMINI_API_URL || "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+  
+  if (!GEMINI_API_KEY) {
+    throw new Error('Missing Gemini API key. Please check your .env file.');
+  }
 
   const getAIResponse = async (userMessage, detectedLanguage) => {
     try {
