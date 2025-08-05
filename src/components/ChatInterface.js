@@ -68,12 +68,88 @@ const ChatInterface = () => {
     throw new Error('Missing Gemini API key. Please check your .env file.');
   }
 
+  // Crisis detection patterns
+  const crisisPatterns = {
+    emotionalDistress: [
+      "falling apart", "can't take this anymore", "completely numb", "empty", "overwhelmed",
+      "everything is falling apart", "i can't take this anymore", "i feel completely numb", "i feel empty",
+      "i'm overwhelmed", "don't know what to do"
+    ],
+    loneliness: [
+      "no one understands", "tired of pretending", "always feel so alone", "don't want to be a burden",
+      "no one understands me", "i'm tired of pretending", "why do i always feel so alone",
+      "i don't want to be a burden", "feel like no one understands"
+    ],
+    selfDoubt: [
+      "hate myself", "failed everyone", "nothing i do feels good enough", "don't see the point",
+      "i hate myself", "i feel like i've failed", "nothing i do ever feels good enough",
+      "i don't see the point", "feel like i've failed everyone"
+    ],
+    suicidalIdeation: [
+      "don't want to live", "thinking about ending it", "no reason to keep going", "would anyone care if i disappeared",
+      "i don't want to live anymore", "i'm thinking about ending it all", "is there even a reason to keep going",
+      "would anyone even care if i disappeared", "want to end my life", "thinking of suicide"
+    ],
+    passiveCrisis: [
+      "wish i could just sleep and not wake up", "dark thoughts", "feel like giving up",
+      "i wish i could just sleep and not wake up", "i keep having dark thoughts", "sometimes i feel like giving up",
+      "scared of my thoughts", "wish i could disappear"
+    ]
+  };
+
+  // Function to detect crisis level
+  const detectCrisisLevel = (message) => {
+    const lowerMessage = message.toLowerCase();
+    
+    // Check for suicidal ideation first (highest priority)
+    if (crisisPatterns.suicidalIdeation.some(pattern => lowerMessage.includes(pattern))) {
+      return 'suicidal';
+    }
+    
+    // Check for other crisis patterns
+    if (crisisPatterns.emotionalDistress.some(pattern => lowerMessage.includes(pattern)) ||
+        crisisPatterns.loneliness.some(pattern => lowerMessage.includes(pattern)) ||
+        crisisPatterns.selfDoubt.some(pattern => lowerMessage.includes(pattern)) ||
+        crisisPatterns.passiveCrisis.some(pattern => lowerMessage.includes(pattern))) {
+      return 'crisis';
+    }
+    
+    return 'normal';
+  };
+
+  // Get helpline information based on language
+  const getHelplineInfo = (language) => {
+    if (language === 'hi') {
+      return `
+🚨 CRISIS SUPPORT - तत्काल सहायता:
+• राष्ट्रीय मानसिक स्वास्थ्य हेल्पलाइन: 1800-599-0019 (24/7)
+• वंदे मातरम हेल्पलाइन: 1800-599-0019
+• आपातकालीन नंबर: 112
+• स्थानीय मानसिक स्वास्थ्य क्लिनिक से संपर्क करें
+
+याद रखें: आप अकेले नहीं हैं। पेशेवर मदद उपलब्ध है और यह मायने रखती है।`;
+    } else {
+      return `
+🚨 CRISIS SUPPORT - Immediate Help:
+• National Mental Health Helpline: 1800-599-0019 (24/7)
+• Vandre Matram Helpline: 1800-599-0019
+• Emergency: 112
+• Contact your local mental health clinic
+
+Remember: You are not alone. Professional help is available and it matters.`;
+    }
+  };
+
   const getAIResponse = async (userMessage, detectedLanguage) => {
     try {
       const conversationContext = currentConversation?.messages?.slice(-3) || [];
       const contextText = conversationContext.length > 0 
         ? `\n\nCONVERSATION CONTEXT (last 3 messages):\n${conversationContext.map(msg => `${msg.sender}: ${msg.text}`).join('\n')}`
         : '';
+
+      // Detect crisis level
+      const crisisLevel = detectCrisisLevel(userMessage);
+      const helplineInfo = getHelplineInfo(detectedLanguage);
 
       const enhancedPrompt = `You are Mitra, an advanced AI mental health companion designed to provide empathetic, supportive, and evidence-based responses. 
 
@@ -92,6 +168,12 @@ IMPORTANT GUIDELINES:
 - ALWAYS introduce yourself as "Mitra" when asked about your name or identity
 - If the user asks "who are you", "what's your name", "introduce yourself", or similar questions, respond with "I'm Mitra, your mental health companion"
 
+CRISIS RESPONSE GUIDELINES:
+- If the user expresses suicidal thoughts or severe crisis, respond with immediate empathy and ALWAYS include helpline information
+- For crisis situations, prioritize safety and professional help
+- Be direct about the importance of seeking immediate professional support
+- Show understanding while emphasizing that professional help is available and effective
+
 RESPONSE STYLE:
 - Start with empathy and validation (DO NOT use "Namaste" or similar greetings in every response)
 - Provide practical suggestions or techniques
@@ -105,10 +187,14 @@ RESPONSE STYLE:
 CONTEXT: This is a mental health support conversation. The user may be experiencing stress, anxiety, depression, or other mental health challenges.${contextText}
 
 User message: "${userMessage}"
+Crisis Level Detected: ${crisisLevel}
 
 SPECIAL INSTRUCTIONS:
 - If the user asks about your name, identity, or asks you to introduce yourself, respond with: "I'm Mitra, your mental health companion. I'm here to provide supportive conversations and help you with your mental wellness journey."
 - If this is the first message in a conversation, introduce yourself as Mitra
+- If crisis level is 'suicidal' or 'crisis', ALWAYS include the following helpline information at the end of your response:
+
+${helplineInfo}
 
 Please provide a supportive, helpful response that follows these guidelines. DO NOT start with "Namaste" or similar greetings unless it's the very first greeting of the conversation.`;
 
