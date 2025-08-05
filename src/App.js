@@ -288,10 +288,7 @@ function AppContent() {
                 <MessageCircle className="w-4 h-4" />
                 <span>24/7 Support</span>
               </div>
-              <div className="flex items-center space-x-2">
-                <Heart className="w-4 h-4" />
-                <span>Trusted by 10K+ Users</span>
-              </div>
+              
             </motion.div>
           </div>
         </div>
